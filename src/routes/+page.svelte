@@ -42,7 +42,7 @@
   
     <div class="relative z-10 container mx-auto p-4 h-full">
       <div class="flex justify-between items-center mb-4">
-        <h1 class="text-3xl font-bold text-white">Chat with Waifu</h1>
+        <h1 class="text-3xl font-bold text-white">Chat w/ Istrimu</h1>
         <button 
           on:click={toggleAudio} 
           class="bg-purple-500 text-white px-4 py-2 rounded-lg"
