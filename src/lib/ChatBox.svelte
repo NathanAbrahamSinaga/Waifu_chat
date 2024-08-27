@@ -1,41 +1,66 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import { browser } from '$app/environment';
 
   let messages = [];
   let inputMessage = '';
   let audio;
+  let ws;
 
   onMount(() => {
     if (browser) {
       audio = new Audio();
+      connectWebSocket();
     }
-    loadMessages();
   });
 
-  async function loadMessages() {
-    const response = await fetch('http://localhost:3000/api/messages');
-    messages = await response.json();
+  onDestroy(() => {
+    if (ws) {
+      ws.close();
+    }
+  });
+
+  function connectWebSocket() {
+    ws = new WebSocket('ws://localhost:3000');
+
+    ws.onopen = () => {
+      console.log('WebSocket connected');
+      loadMessages();
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'update') {
+        messages = data.messages;
+      } else if (data.type === 'error') {
+        console.error('Server error:', data.message);
+      }
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket disconnected');
+      setTimeout(connectWebSocket, 5000);
+    };
   }
 
-  async function sendMessage() {
+  function loadMessages() {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'get-messages' }));
+    }
+  }
+
+  function sendMessage() {
     if (inputMessage.trim() === '') return;
 
-    const response = await fetch('http://localhost:3000/api/chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ message: inputMessage }),
-    });
-
-    const data = await response.json();
-    messages = [...messages, { sender: 'user', content: inputMessage }, { sender: 'ai', content: data.message, content_jp: data.translation, audio_url: data.audioUrl }];
-    inputMessage = '';
-
-    if (browser && data.audioUrl) {
-      audio.src = data.audioUrl;
-      audio.play();
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'chat', message: inputMessage }));
+      inputMessage = '';
+    } else {
+      console.error('WebSocket is not connected');
     }
   }
 
@@ -46,15 +71,11 @@
     }
   }
 
-  async function clearChat() {
-    const response = await fetch('http://localhost:3000/api/clear-chat', {
-      method: 'POST',
-    });
-
-    if (response.ok) {
-      messages = [];
+  function clearChat() {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'clear-chat' }));
     } else {
-      console.error('Failed to clear chat');
+      console.error('WebSocket is not connected');
     }
   }
 </script>

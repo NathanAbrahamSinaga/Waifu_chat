@@ -9,7 +9,6 @@
       audio = new Audio('/background-music.mp3');
       audio.loop = true;
   
-      // Mencoba autoplay
       playAudio().catch(error => {
         console.log("Autoplay prevented. Please use the play button.");
       });
