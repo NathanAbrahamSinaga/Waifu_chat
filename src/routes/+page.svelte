@@ -45,7 +45,7 @@
         <h1 class="text-3xl font-bold text-white">Chat w/ Istrimu</h1>
         <button 
           on:click={toggleAudio} 
-          class="bg-purple-500 text-white px-4 py-2 rounded-lg"
+          class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors duration-200"
         >
           {isPlaying ? 'Pause Music' : 'Play Music'}
         </button>
