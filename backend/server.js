@@ -12,7 +12,18 @@ app.use(cors());
 app.use(express.json());
 
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
+const wss = new WebSocket.Server({ 
+  server,
+  verifyClient: (info, cb) => {
+    const origin = info.origin;
+    const allowedOrigins = ['http://localhost:3000', 'https://your-vercel-domain.vercel.app'];
+    if (allowedOrigins.includes(origin)) {
+      cb(true);
+    } else {
+      cb(false, 403, 'Forbidden');
+    }
+  }
+});
 
 const dbConfig = {
   host: process.env.DB_HOST,
