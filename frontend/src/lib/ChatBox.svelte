@@ -22,7 +22,7 @@
 
   function connectWebSocket() {
     const wsUrl = import.meta.env.PROD 
-      ? 'wss://your-vercel-backend-url.vercel.app'
+      ? 'wss://waifu-chat-api.vercel.app/'
       : 'ws://localhost:3000';
     ws = new WebSocket(wsUrl);
 
