@@ -12,18 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 const server = http.createServer(app);
-const wss = new WebSocket.Server({ 
-  server,
-  verifyClient: (info, cb) => {
-    const origin = info.origin;
-    const allowedOrigins = ['http://localhost:3000', 'https://waifu-chat.vercel.app/'];
-    if (allowedOrigins.includes(origin)) {
-      cb(true);
-    } else {
-      cb(false, 403, 'Forbidden');
-    }
-  }
-});
+const wss = new WebSocket.Server({ server });
 
 const dbConfig = {
   host: process.env.DB_HOST,
@@ -107,7 +96,7 @@ async function getMessages() {
   return rows;
 }
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.DB_PORT;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
