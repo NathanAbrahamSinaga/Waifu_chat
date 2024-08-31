@@ -16,7 +16,7 @@ const wss = new WebSocket.Server({
   server,
   verifyClient: (info, cb) => {
     const origin = info.origin;
-    const allowedOrigins = ['http://localhost:3000', 'https://your-vercel-domain.vercel.app'];
+    const allowedOrigins = ['http://localhost:3000', 'https://waifu-chat.vercel.app/'];
     if (allowedOrigins.includes(origin)) {
       cb(true);
     } else {
