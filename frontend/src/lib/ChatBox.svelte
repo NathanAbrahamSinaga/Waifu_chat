@@ -21,7 +21,7 @@
   });
 
   function connectWebSocket() {
-    ws = new WebSocket('ws://waifu-chat-api.vercel.app');
+    ws = new WebSocket('https://waifu-chat.vercel.app');
 
     ws.onopen = () => {
       console.log('WebSocket connected');
